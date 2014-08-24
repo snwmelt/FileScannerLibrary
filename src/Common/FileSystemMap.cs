@@ -69,6 +69,8 @@ namespace FileScannerLibrary.Common
             genSubDirMap(rootDirectory, 0);
         }
 
+        public bool IgnoreDepth { set; get; }
+
         public long MaxDepth 
         {
             set
@@ -116,7 +118,7 @@ namespace FileScannerLibrary.Common
 
         private void genSubDirMap(DirectoryInfo directoryInfo, long depth)
         {
-            if (depth > MaxDepth)
+            if (depth > MaxDepth && !IgnoreDepth)
             {
                 return;
             }
