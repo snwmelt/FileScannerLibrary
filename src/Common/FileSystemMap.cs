@@ -12,6 +12,7 @@ namespace FileScannerLibrary.Common
         private List<MapNode> directoryMap;
         private long          maxDepth;
         private DirectoryInfo rootDirectory;
+        private bool          stop;
 
         public FileSystemMap(DirectoryInfo RootDirectory)
         {
@@ -118,6 +119,9 @@ namespace FileScannerLibrary.Common
 
         private void genSubDirMap(DirectoryInfo directoryInfo, long depth)
         {
+            if (stop)
+                return;
+
             if (depth > MaxDepth && !IgnoreDepth)
             {
                 return;
@@ -129,9 +133,17 @@ namespace FileScannerLibrary.Common
 
             for (int i = 0; i < Directories.Length; i++)
             {
+                if (stop)
+                    break;
+
                 addNode(new MapNode(Directories[i], nodeDepth));
                 genSubDirMap(Directories[i], nodeDepth);
             }
+        }
+
+        internal void Stop()
+        {
+            stop = true;
         }
     }
 }

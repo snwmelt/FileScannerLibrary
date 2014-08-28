@@ -13,6 +13,7 @@ namespace FileScannerLibrary.Synchronous
         private static TypeAccessException ActiveScanException        = new TypeAccessException(ActiveScanExceptionMessage);
         private static string              ActiveScanExceptionMessage = @"Fields Or Properties Cannot Be Modified Whilst A Scan Is Occuring";
 
+        private bool     active;
         private string   directory;
         private string[] searchFor;
         private bool     recursive;
@@ -23,7 +24,22 @@ namespace FileScannerLibrary.Synchronous
             recursiveDepth = 0;
         }
 
-        public bool Active { private set; get; }
+        public bool Active 
+        {
+            private set
+            {
+                active = value;
+
+                if (!active && recursive && SubDirectoryMap != null)
+                {
+                    SubDirectoryMap.Stop();
+                }
+            }
+            get
+            {
+                return active;
+            }
+        }
 
         public void AddSearchTerm(string SearchTerm)
         {
@@ -80,6 +96,11 @@ namespace FileScannerLibrary.Synchronous
                 }
 
                 recursive = value;
+
+                if (recursive && SubDirectoryMap == null)
+                {
+                    SubDirectoryMap = new FileSystemMap(new DirectoryInfo(Directory));
+                }
             }
 
             get
@@ -111,8 +132,6 @@ namespace FileScannerLibrary.Synchronous
                 return;
 
             shallowScan();
-
-            SubDirectoryMap = new FileSystemMap(new DirectoryInfo(Directory));
 
             SubDirectoryMap.MaxDepth        = RecursiveDepth;
             SubDirectoryMap.NodeAddedEvent +=
@@ -244,6 +263,9 @@ namespace FileScannerLibrary.Synchronous
 
             for(int i = 0; i < FileInfo.Length; i++)
             {
+                if (!Active)
+                    break;
+
                 string matchString = null;
 
                 switch (ScanMode)
