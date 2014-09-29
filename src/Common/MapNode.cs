@@ -2,31 +2,15 @@
 
 namespace FileScannerLibrary.Common
 {
-    public sealed class MapNode
+    public struct MapNode
     {
-        private DirectoryInfo node;
-        private long          nodeDepth;
+        public readonly DirectoryInfo Node;
+        public readonly long          NodeDepth;
 
         public MapNode(DirectoryInfo Node, long NodeDepth)
         {
-            node      = Node;
-            nodeDepth = NodeDepth;
-        }
-
-        public DirectoryInfo Node
-        {
-            get
-            {
-                return node;
-            }
-        }
-
-        public long NodeDepth
-        {
-            get
-            {
-                return nodeDepth;
-            }
+            this.Node      = Node;
+            this.NodeDepth = NodeDepth;
         }
     }
 }
